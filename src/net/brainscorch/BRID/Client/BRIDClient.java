@@ -1,14 +1,34 @@
 package net.brainscorch.BRID.Client;
 
-public class BRIDClient extends javax.swing.JFrame {
+import java.awt.event.ActionEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
+public class BRIDClient extends javax.swing.JFrame {
+	private CommandSender cSend;
 	/**
 	 * Creates new form BRIDClient
 	 */
 	public BRIDClient() {
 		super("BRID Client");
 		initComponents();
+		
+		cSend = new CommandSender();
+		
+		jTextFieldServerAddress.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void changedUpdate(DocumentEvent e) { onChange(); }
+			@Override
+			public void removeUpdate(DocumentEvent e) { onChange(); }
+			@Override
+			public void insertUpdate(DocumentEvent e) { onChange(); }
+			
+			public void onChange() {
+				System.out.printf("Server Address is now: %s\n", jTextFieldServerAddress.getText());
+			}
+		});
 	}
+	
 
 	/**
 	 * This method is called from within the constructor to initialize the
@@ -161,13 +181,16 @@ public class BRIDClient extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+	
 	private void jTextFieldServerAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldServerAddressActionPerformed
 		// TODO add your handling code here:
+		
+		//cSend.setStrServerAddress(this.toString());
 	}//GEN-LAST:event_jTextFieldServerAddressActionPerformed
 
 	private void jButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectActionPerformed
 		// TODO add your handling code here:
+		cSend.sendMessageToServer("STATUS##");
 	}//GEN-LAST:event_jButtonConnectActionPerformed
 
 	/**
