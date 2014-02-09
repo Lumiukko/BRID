@@ -1,9 +1,6 @@
 package net.brainscorch.BRID.Server;
 
-import java.awt.Color;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +30,14 @@ public class BRIDServer extends javax.swing.JFrame {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		this.setSize(gd.getDisplayMode().getWidth(), gd.getDisplayMode().getHeight());
 		jPanel1.setBackground(Color.BLACK);
+		
+		try {
+			Robot robot = new Robot();
+			robot.mouseMove((int)dInfo.getScreenDimension().getHeight(), (int)dInfo.getScreenDimension().getWidth());
+		}
+		catch (AWTException e) {
+			System.err.printf("Error: ", e.getMessage());
+		}
 		
 	}
 	
