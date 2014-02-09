@@ -1,16 +1,67 @@
 package net.brainscorch.BRID.Server;
 
+import java.awt.Color;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 public class BRIDServer extends javax.swing.JFrame {
 	
+	DisplayInformation dInfo;
 	/**
 	 * Creates new form BRIDServer
 	 */
 	public BRIDServer() {
-		super("BRID Server");
+		this.setUndecorated(true);			
 		initComponents();
-		CommandListener cListen = new CommandListener();
 		
+		dInfo = new DisplayInformation();
+		
+		
+		CommandListener cListen = new CommandListener(dInfo);
 		cListen.start();
+		
+		ImageListener iListen = new ImageListener(dInfo, this);
+		iListen.start();
+		
+		System.out.printf("Entering FullScreen.\n");
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		this.setSize(gd.getDisplayMode().getWidth(), gd.getDisplayMode().getHeight());
+		jPanel1.setBackground(Color.BLACK);
+		
+	}
+	
+	public void loadNewImage() {
+		try {
+			BufferedImage bImage = ImageIO.read(new File(dInfo.getStrImageFile()));
+			float aspectRatio = bImage.getWidth() / bImage.getHeight();
+			float screenRatio = (float)dInfo.getScreenDimension().getWidth() / (float)dInfo.getScreenDimension().getHeight();
+			Image sImage;
+			if (aspectRatio >= screenRatio) {
+				float scaleFactor = (float) (dInfo.getScreenDimension().getWidth() / bImage.getWidth());
+				//System.out.printf("Scale Factor: x %.3f\n", scaleFactor);
+				//System.out.printf("New Image Dimensions: %dx%d\n", Math.round(bImage.getHeight()*scaleFactor), 90);
+				sImage = bImage.getScaledInstance((int)dInfo.getScreenDimension().getWidth(), Math.round(bImage.getHeight()*scaleFactor), Image.SCALE_SMOOTH);
+
+			}
+			else {
+				float scaleFactor = (float)dInfo.getScreenDimension().getHeight() / bImage.getHeight();
+				//System.out.printf("Scale Factor: x %.3f\n", scaleFactor);
+				//System.out.printf("New Image Dimensions: %dx%d\n", Math.round(bImage.getWidth()*scaleFactor), 90);
+				sImage = bImage.getScaledInstance(Math.round(bImage.getWidth()*scaleFactor), (int)dInfo.getScreenDimension().getHeight(), Image.SCALE_SMOOTH);
+			}
+
+			ImageIcon icon = new ImageIcon(sImage);
+			jLabelImage.setIcon(icon);
+		}
+		catch (IOException e) {
+			
+		}
 	}
 
 	/**
@@ -22,19 +73,37 @@ public class BRIDServer extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         jLabelImage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("BRID Server");
+        setAlwaysOnTop(true);
+        setBackground(new java.awt.Color(0, 0, 0));
+
+        jLabelImage.setBackground(new java.awt.Color(0, 0, 0));
+        jLabelImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabelImage, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabelImage, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabelImage, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabelImage, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -83,5 +152,6 @@ public class BRIDServer extends javax.swing.JFrame {
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabelImage;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

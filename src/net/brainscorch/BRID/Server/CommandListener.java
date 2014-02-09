@@ -15,6 +15,12 @@ public class CommandListener extends Thread {
 	private ServerSocket	listenSocket;
 	private InputStream	inStream;
 	
+	private DisplayInformation dInfo;
+	
+	CommandListener(DisplayInformation dInfo) {
+		this.dInfo = dInfo;
+	}
+	
 	
 	@Override
 	public void run() {
@@ -36,7 +42,7 @@ public class CommandListener extends Thread {
 					String remoteAddr = stripAddress(dataSocket.getRemoteSocketAddress().toString());
 	
 					System.out.printf("CommandListener received STATUS request from %s.\n", remoteAddr);			
-					DisplayInformation dInfo = new DisplayInformation();
+					dInfo.refresh();
 					
 					StatusSender sSend = new StatusSender(remoteAddr, dInfo);
 					sSend.start();

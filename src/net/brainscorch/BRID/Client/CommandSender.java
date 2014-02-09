@@ -1,6 +1,6 @@
 package net.brainscorch.BRID.Client;
 
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -29,10 +29,16 @@ public class CommandSender {
 			sendSocket.close();
 			return true;
 		}
-		catch (Exception e) {
+		catch (UnknownHostException e) {
+			System.err.printf("Error: Unknown Host \"%s\"\n", e.getMessage());
+			return false;
+		}
+		catch (IOException e) {
+			System.err.printf("Error: %s\n", e.getMessage());
 			return false;
 		}
 	}
+
 
 	/**
 	 * @return the strServerAddress

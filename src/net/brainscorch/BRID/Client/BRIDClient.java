@@ -1,16 +1,26 @@
 package net.brainscorch.BRID.Client;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class BRIDClient extends javax.swing.JFrame {
 	
 	private final String	STATUS_REQUEST = "#STATUS#";
 	
-	private CommandSender cSend;
-	private StatusListener sListen;
+	private CommandSender	cSend;
+	private ImageSender	iSend;
+	private StatusListener	sListen;
 	private ServerInformation sInfo;
 	
 	/**
@@ -23,6 +33,8 @@ public class BRIDClient extends javax.swing.JFrame {
 		sInfo = new ServerInformation();
 		
 		cSend = new CommandSender();
+		iSend = new ImageSender();
+		
 		sListen = new StatusListener(this);
 		sListen.start();
 		
@@ -36,7 +48,9 @@ public class BRIDClient extends javax.swing.JFrame {
 			public void insertUpdate(DocumentEvent e) { onChange(); }
 			
 			public void onChange() {
-				System.out.printf("Server Address is now: %s\n", jTextFieldServerAddress.getText());
+				cSend.setStrServerAddress(jTextFieldServerAddress.getText());
+				iSend.setStrServerAddress(jTextFieldServerAddress.getText());
+				System.out.printf("Server Address is now: %s\n", cSend.getStrServerAddress());
 			}
 		});
 	}
@@ -64,8 +78,6 @@ public class BRIDClient extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jTextFieldServerAddress = new javax.swing.JTextField();
         jButtonConnect = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabelServerStatus = new javax.swing.JLabel();
         jLabelThumbnail = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -75,8 +87,12 @@ public class BRIDClient extends javax.swing.JFrame {
         jLabelScaleFactor = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabelImageSize = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaLogList = new javax.swing.JTextArea();
+        jButtonSelectImage = new javax.swing.JButton();
+        jLabelImageSelection = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel2 = new javax.swing.JLabel();
+        jButtonSendImage = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -89,16 +105,12 @@ public class BRIDClient extends javax.swing.JFrame {
             }
         });
 
-        jButtonConnect.setText("Connect");
+        jButtonConnect.setText("Get Info");
         jButtonConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonConnectActionPerformed(evt);
             }
         });
-
-        jLabel2.setText("Server Status:");
-
-        jLabelServerStatus.setText("Disconnected");
 
         jLabelThumbnail.setIcon(new javax.swing.ImageIcon(getClass().getResource("/net/brainscorch/BRID/Client/img/nopic.png"))); // NOI18N
         jLabelThumbnail.setText("jLabel4");
@@ -120,51 +132,72 @@ public class BRIDClient extends javax.swing.JFrame {
 
         jLabelImageSize.setText("-");
 
-        jTextAreaLogList.setColumns(20);
-        jTextAreaLogList.setEditable(false);
-        jTextAreaLogList.setRows(5);
-        jTextAreaLogList.setName("taLogList");
-        jScrollPane1.setViewportView(jTextAreaLogList);
+        jButtonSelectImage.setText("Select Image");
+        jButtonSelectImage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSelectImageActionPerformed(evt);
+            }
+        });
+
+        jLabelImageSelection.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelImageSelection.setIcon(new javax.swing.ImageIcon(getClass().getResource("/net/brainscorch/BRID/Client/img/nopic.png"))); // NOI18N
+        jLabelImageSelection.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel2.setText("Preview:");
+
+        jButtonSendImage.setText("Send Image");
+        jButtonSendImage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSendImageActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButtonSelectImage))
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jTextFieldServerAddress))
-                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addGap(30, 30, 30)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel2)
-                                            .addComponent(jLabel6)
-                                            .addComponent(jLabel11)
-                                            .addComponent(jLabel5))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabelServerStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabelScaleFactor)
                                             .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(jLabelThumbnail, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(jLabelImageSize)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addComponent(jLabelDimensions)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(jLabelDimensionsRatio))
-                                                    .addComponent(jLabelScaleFactor))
-                                                .addGap(0, 0, Short.MAX_VALUE)))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonConnect))
-                            .addComponent(jLabel9))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                                .addComponent(jLabelDimensions)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabelDimensionsRatio))
+                                            .addComponent(jLabelImageSize))
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel1)
+                                            .addComponent(jLabel5)
+                                            .addComponent(jLabel2))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabelImageSelection, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabelThumbnail, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextFieldServerAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButtonConnect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(2, 2, 2)
+                                        .addComponent(jButtonSendImage, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))))
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel11))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -175,15 +208,11 @@ public class BRIDClient extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jTextFieldServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonConnect))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabelServerStatus))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelThumbnail, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addGap(46, 46, 46)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabelThumbnail, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jLabelDimensions)
@@ -197,8 +226,19 @@ public class BRIDClient extends javax.swing.JFrame {
                     .addComponent(jLabel9)
                     .addComponent(jLabelScaleFactor))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jButtonSelectImage)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonSendImage))
+                        .addComponent(jLabelImageSelection, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         pack();
@@ -206,14 +246,56 @@ public class BRIDClient extends javax.swing.JFrame {
 	
 	private void jTextFieldServerAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldServerAddressActionPerformed
 		// TODO add your handling code here:
-		
-		//cSend.setStrServerAddress(this.toString());
 	}//GEN-LAST:event_jTextFieldServerAddressActionPerformed
 
 	private void jButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectActionPerformed
 		// TODO add your handling code here:
 		cSend.sendMessageToServer(STATUS_REQUEST);
 	}//GEN-LAST:event_jButtonConnectActionPerformed
+
+	private void jButtonSelectImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSelectImageActionPerformed
+		// TODO add your handling code here:
+		JFileChooser fChooser = new JFileChooser();
+		FileNameExtensionFilter fFilter = new FileNameExtensionFilter("JPG Images", "jpg");
+		fChooser.setFileFilter(fFilter);
+		int fReturnVal = fChooser.showOpenDialog(this);
+		if (fReturnVal == JFileChooser.APPROVE_OPTION) {
+			System.out.printf("New file chosen: %s\n", fChooser.getSelectedFile().getAbsolutePath());
+			iSend.setImageFile(fChooser.getSelectedFile());
+			try {
+				BufferedImage bImage = ImageIO.read(iSend.getImageFile());
+				float aspectRatio = bImage.getWidth() / bImage.getHeight();
+				Image sImage;
+				if (aspectRatio >= (16/9)) {
+					float scaleFactor = (float)160 / (float)bImage.getWidth();
+					//System.out.printf("Scale Factor: x %.3f\n", scaleFactor);
+					//System.out.printf("New Image Dimensions: %dx%d\n", Math.round(bImage.getHeight()*scaleFactor), 90);
+					sImage = bImage.getScaledInstance(160, Math.round(bImage.getHeight()*scaleFactor), Image.SCALE_SMOOTH);
+					
+				}
+				else {
+					float scaleFactor = (float)90 / (float)bImage.getHeight();
+					//System.out.printf("Scale Factor: x %.3f\n", scaleFactor);
+					//System.out.printf("New Image Dimensions: %dx%d\n", Math.round(bImage.getWidth()*scaleFactor), 90);
+					sImage = bImage.getScaledInstance(Math.round(bImage.getWidth()*scaleFactor), 90, Image.SCALE_SMOOTH);
+				}
+				
+				ImageIcon icon = new ImageIcon(sImage);
+				jLabelImageSelection.setIcon(icon);
+			}
+			catch (IOException e) {
+				System.err.printf("Error: could not read image \"%s\"\n", iSend.getImageFile().getAbsoluteFile());
+			}
+			
+			
+		}
+	}//GEN-LAST:event_jButtonSelectImageActionPerformed
+	
+	private void jButtonSendImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendImageActionPerformed
+		// TODO add your handling code here:
+		//System.out.println(new File(".").getAbsolutePath());
+		iSend.sendImageToServer();
+	}//GEN-LAST:event_jButtonSendImageActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -259,6 +341,8 @@ public class BRIDClient extends javax.swing.JFrame {
 	}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonConnect;
+    private javax.swing.JButton jButtonSelectImage;
+    private javax.swing.JButton jButtonSendImage;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
@@ -267,12 +351,12 @@ public class BRIDClient extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelDimensions;
     private javax.swing.JLabel jLabelDimensionsRatio;
+    private javax.swing.JLabel jLabelImageSelection;
     private javax.swing.JLabel jLabelImageSize;
     private javax.swing.JLabel jLabelScaleFactor;
-    private javax.swing.JLabel jLabelServerStatus;
     private javax.swing.JLabel jLabelThumbnail;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextAreaLogList;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextField jTextFieldServerAddress;
     // End of variables declaration//GEN-END:variables
 }

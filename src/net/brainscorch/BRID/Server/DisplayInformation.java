@@ -6,7 +6,8 @@ import java.awt.GraphicsEnvironment;
 
 
 public class DisplayInformation {
-	private Dimension screenDimension;
+	private Dimension	screenDimension;
+	private String		strImageFile;
 	
 	DisplayInformation() {
 		screenDimension = new Dimension();
@@ -29,5 +30,19 @@ public class DisplayInformation {
 	 */
 	public Dimension getScreenDimension() {
 		return screenDimension;
+	}
+
+	/**
+	 * @return the strImageFile
+	 */
+	public String getStrImageFile() {
+		return strImageFile;
+	}
+
+	/**
+	 * @param strImageFile the strImageFile to set
+	 */
+	public void setStrImageFile(String strImageFile) {
+		this.strImageFile = strImageFile;
 	}
 }
