@@ -9,7 +9,7 @@ import java.util.logging.Level;
 
 public class CommandSender {
 	private final int TIMEOUT = 200;
-	
+
 	private String	strServerAddress;
 	private Integer	intServerPort;
 	

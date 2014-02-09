@@ -1,8 +1,6 @@
 package net.brainscorch.BRID.Server;
 
 public class BRIDServer extends javax.swing.JFrame {
-
-	
 	
 	/**
 	 * Creates new form BRIDServer
@@ -11,7 +9,6 @@ public class BRIDServer extends javax.swing.JFrame {
 		super("BRID Server");
 		initComponents();
 		CommandListener cListen = new CommandListener();
-		
 		
 		cListen.start();
 	}

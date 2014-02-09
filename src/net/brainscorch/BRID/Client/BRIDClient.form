@@ -172,12 +172,12 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelDimensions">
       <Properties>
-        <Property name="text" type="java.lang.String" value="1920x1080"/>
+        <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelDimensionsRatio">
       <Properties>
-        <Property name="text" type="java.lang.String" value="(16:9)"/>
+        <Property name="text" type="java.lang.String" value="(-)"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel9">
@@ -187,7 +187,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelScaleFactor">
       <Properties>
-        <Property name="text" type="java.lang.String" value="x 12.00"/>
+        <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel11">
@@ -197,7 +197,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelImageSize">
       <Properties>
-        <Property name="text" type="java.lang.String" value="160x90"/>
+        <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">

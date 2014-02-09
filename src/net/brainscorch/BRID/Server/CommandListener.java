@@ -6,6 +6,9 @@ import java.net.Socket;
 
 public class CommandListener extends Thread {
 	private final int	MESSAGE_SIZE = 8;
+	
+	private final String	STATUS_REQUEST = "#STATUS#";
+	
 	private final int	SERVER_PORT = 12021;
 	
 	private Socket		dataSocket;
@@ -29,9 +32,15 @@ public class CommandListener extends Thread {
 					i = inStream.read();
 				}
 				
-				if (message.equals("STATUS##")) {
-					System.out.printf("CommandListener received STATUS request from %s.\n", dataSocket.getRemoteSocketAddress().toString());
-					// Create StatusSender Thread and send status to the client.
+				if (message.equals(STATUS_REQUEST)) {
+					String remoteAddr = stripAddress(dataSocket.getRemoteSocketAddress().toString());
+	
+					System.out.printf("CommandListener received STATUS request from %s.\n", remoteAddr);			
+					DisplayInformation dInfo = new DisplayInformation();
+					
+					StatusSender sSend = new StatusSender(remoteAddr, dInfo);
+					sSend.start();
+					
 				}
 				else {
 					System.err.printf("CommandListener received malformed message from %s. IGNORED. Message: %s\n", dataSocket.getRemoteSocketAddress().toString(), message);
@@ -43,5 +52,11 @@ public class CommandListener extends Thread {
 			System.err.println(e.toString());
 			e.printStackTrace();
 		}
+	}
+	
+	private String stripAddress(String addr) {
+		String temp[] = addr.split(":");
+		String ret = temp[0];
+		return ret.substring(1);
 	}
 }

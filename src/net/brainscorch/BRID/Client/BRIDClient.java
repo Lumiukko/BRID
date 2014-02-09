@@ -1,11 +1,18 @@
 package net.brainscorch.BRID.Client;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class BRIDClient extends javax.swing.JFrame {
+	
+	private final String	STATUS_REQUEST = "#STATUS#";
+	
 	private CommandSender cSend;
+	private StatusListener sListen;
+	private ServerInformation sInfo;
+	
 	/**
 	 * Creates new form BRIDClient
 	 */
@@ -13,7 +20,12 @@ public class BRIDClient extends javax.swing.JFrame {
 		super("BRID Client");
 		initComponents();
 		
+		sInfo = new ServerInformation();
+		
 		cSend = new CommandSender();
+		sListen = new StatusListener(this);
+		sListen.start();
+		
 		
 		jTextFieldServerAddress.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
@@ -29,6 +41,16 @@ public class BRIDClient extends javax.swing.JFrame {
 		});
 	}
 	
+	public void setScreenDimension(Dimension d) {
+		String dimensionText = String.format("%dx%d", (int)d.getWidth(), (int)d.getHeight());
+		jLabelDimensions.setText(dimensionText);
+		Integer ratio = gcd((int)d.getWidth(), (int)d.getHeight());
+		String aspectRatio = String.format("(%d:%d)", (int)(d.getWidth()/ratio), (int)(d.getHeight()/ratio));
+		//System.out.printf("Calculated Ratio: %s\n", aspectRatio);
+		jLabelDimensionsRatio.setText(aspectRatio);
+	}
+	
+	private int gcd(int a, int b) { return b==0 ? a : gcd(b, a%b); }
 
 	/**
 	 * This method is called from within the constructor to initialize the
@@ -86,17 +108,17 @@ public class BRIDClient extends javax.swing.JFrame {
 
         jLabel6.setText("Dimensions:");
 
-        jLabelDimensions.setText("1920x1080");
+        jLabelDimensions.setText("-");
 
-        jLabelDimensionsRatio.setText("(16:9)");
+        jLabelDimensionsRatio.setText("(-)");
 
         jLabel9.setText("Image Scale:");
 
-        jLabelScaleFactor.setText("x 12.00");
+        jLabelScaleFactor.setText("-");
 
         jLabel11.setText("Image Size:");
 
-        jLabelImageSize.setText("160x90");
+        jLabelImageSize.setText("-");
 
         jTextAreaLogList.setColumns(20);
         jTextAreaLogList.setEditable(false);
@@ -190,7 +212,7 @@ public class BRIDClient extends javax.swing.JFrame {
 
 	private void jButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectActionPerformed
 		// TODO add your handling code here:
-		cSend.sendMessageToServer("STATUS##");
+		cSend.sendMessageToServer(STATUS_REQUEST);
 	}//GEN-LAST:event_jButtonConnectActionPerformed
 
 	/**

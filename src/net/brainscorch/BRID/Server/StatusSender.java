@@ -1,5 +1,6 @@
 package net.brainscorch.BRID.Server;
 
+import java.awt.Dimension;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -10,13 +11,15 @@ public class StatusSender extends Thread {
 	
 	private String	strClientAddress;
 	private Integer	intClientPort;
+	private DisplayInformation dInfo;
 	
-	StatusSender(String clientAddress) {
+	StatusSender(String clientAddress, DisplayInformation dInfo) {
 		intClientPort = 12022;
 		strClientAddress = clientAddress;
+		this.dInfo = dInfo;
 	}
 	
-	public boolean sendMessageToClient(String message) {
+	private boolean sendMessageToClient(String message) {
 		InetAddress clientAddr;
 		try {
 			clientAddr = InetAddress.getByName(getStrClientAddress());
@@ -34,7 +37,10 @@ public class StatusSender extends Thread {
 	
 	@Override
 	public void run() {
-		
+		Dimension dimension = dInfo.getScreenDimension();
+		String message = String.format("SD%04d%04d", (int)dimension.getWidth(), (int)dimension.getHeight());
+		System.out.printf("StatusSender: Sending STATUS reply to %s: %s\n", strClientAddress, message);
+		sendMessageToClient(message);
 	}
 	
 	
