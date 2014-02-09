@@ -10,7 +10,7 @@ The server can be started on a small linux distribution connected to an informat
 Roadmap:
 
 - Implement settings for fitting the picture (scaling, cropping, keep aspect ratio, etc.)
-- Implement possibility to upload multiple images to the server.
+- Implement possibility to upload and persist multiple images to the server.
 - Implement possibility to script display options (images, duration, fitting, text, etc.)
 - Implement persistency to the server, making it able to load last configuration.
   - Send these configurations on connect to the client in order to alter them.
