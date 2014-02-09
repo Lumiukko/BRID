@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class ImageListener extends Thread {
 	final private int SERVER_PORT = 12023;
-	final private String IMAGE_FILE = ".testfile.jpg";
+	final private String IMAGE_FILE = "./testfile.jpg";
 	
 	private DisplayInformation dInfo;
 	private BRIDServer bServer;
