@@ -7,6 +7,7 @@ import java.net.Socket;
 public class ImageListener extends Thread {
 	final private int SERVER_PORT = 12023;
 	final private String IMAGE_FILE = "./testfile.jpg";
+	final private int BUFFER_SIZE = 16384;
 	
 	private DisplayInformation dInfo;
 	private BRIDServer bServer;
@@ -28,7 +29,7 @@ public class ImageListener extends Thread {
 				Socket sock = servsock.accept();
 				try {
 					myFile.createNewFile();
-					byte[] mybytearray = new byte[4096];
+					byte[] mybytearray = new byte[BUFFER_SIZE];
 					fos = new FileOutputStream(myFile);
 					bis = new BufferedInputStream(sock.getInputStream());
 					int count = 0;
