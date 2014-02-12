@@ -21,7 +21,7 @@ Roadmap:
                - Vertical Fitting   = VFIT
                - Total Filling (ignoring aspect ratio)
                                     = TFIT
-DONE  - Implement possibility to upload and persist multiple images to the server.
+      - Implement possibility to upload and persist multiple images to the server. (DONE)
            - Extend communication protocol:
                - E#<hash>  Client asks server is image with has already exists and
                            is not sending it again, if it does.
