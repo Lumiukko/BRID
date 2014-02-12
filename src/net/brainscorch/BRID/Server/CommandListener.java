@@ -8,6 +8,7 @@ public class CommandListener extends Thread {
 	private final int	MESSAGE_SIZE = 8;
 	
 	private final String	STATUS_REQUEST = "#STATUS#";
+	private final String	DATABASE_DUMP = "#DBDUMP#";
 	
 	private final int	SERVER_PORT = 12021;
 	
@@ -47,6 +48,9 @@ public class CommandListener extends Thread {
 					StatusSender sSend = new StatusSender(remoteAddr, dInfo);
 					sSend.start();
 					
+				}
+				else if (message.equals(DATABASE_DUMP)) {
+					System.out.println(DBUtility.getImageMapFromDB().toString());
 				}
 				else {
 					System.err.printf("CommandListener received malformed message from %s. IGNORED. Message: %s\n", dataSocket.getRemoteSocketAddress().toString(), message);
