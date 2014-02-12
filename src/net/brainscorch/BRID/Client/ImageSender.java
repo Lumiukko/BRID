@@ -9,7 +9,7 @@ import java.net.Socket;
 
 public class ImageSender {
 	private final int TIMEOUT = 200;
-	final private int BUFFER_SIZE = 16384;
+	final private int BUFFER_SIZE = 4096;
 
 	private String	strServerAddress;
 	private Integer intServerPort;
@@ -27,6 +27,7 @@ public class ImageSender {
 	
 	public void sendImageToServer(File f) {
 		try {
+			System.out.printf("Sending image to server...\n");
 			Socket socket = new Socket(strServerAddress, intServerPort);
 			socket.setSoTimeout(TIMEOUT);
 			BufferedOutputStream outStream = new BufferedOutputStream(socket.getOutputStream());
@@ -35,6 +36,7 @@ public class ImageSender {
 			for (int read = inStream.read(buffer); read >= 0; read = inStream.read(buffer)) {
 				outStream.write(buffer, 0, read);
 			}
+			System.out.printf("... finished.\n");
 			inStream.close();
 			outStream.close();
 		}

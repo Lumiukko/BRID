@@ -1,6 +1,9 @@
 package net.brainscorch.BRID.Server;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DateFormat;
@@ -10,7 +13,7 @@ import java.util.Calendar;
 public class ImageListener extends Thread {
 	final private int SERVER_PORT = 12023;
 	final private String IMAGE_FILE = ImageData.getImageFolder() + "___tmp";
-	final private int BUFFER_SIZE = 16384;
+	final private int BUFFER_SIZE = 4096;
 	
 	private DisplayInformation dInfo;
 	private BRIDServer bServer;
@@ -31,6 +34,7 @@ public class ImageListener extends Thread {
 			BufferedInputStream bis = null;
 			while (true) {
 				Socket sock = servsock.accept();
+				System.out.printf("Image send request from %s accepted.\n", sock.getRemoteSocketAddress().toString());
 				try {
 					myFile.createNewFile();
 					byte[] mybytearray = new byte[BUFFER_SIZE];
@@ -38,7 +42,6 @@ public class ImageListener extends Thread {
 					bis = new BufferedInputStream(sock.getInputStream());
 					int count = 0;
 					while ((count = bis.read(mybytearray)) >= 0) {
-						//bis.read(mybytearray, 0, count);
 						fos.write(mybytearray, 0, count);
 					}
 					dInfo.setStrImageFile(IMAGE_FILE);
