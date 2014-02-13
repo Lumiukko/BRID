@@ -38,7 +38,7 @@ public class DBUtility {
 		File tmpImageFile = new File(filePath);
 		
 		if (imageFile.exists())
-			System.out.printf("[persistImage] Image file already exists: %s", imageFile.getAbsolutePath());
+			System.out.printf("[persistImage] Image file already exists: %s\n", imageFile.getAbsolutePath());
 		else {
 			try {
 				Files.copy(tmpImageFile.toPath(), imageFile.toPath());

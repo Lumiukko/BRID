@@ -37,9 +37,9 @@ public class ImageListener extends Thread {
 				System.out.printf("Image send request from %s accepted.\n", sock.getRemoteSocketAddress().toString());
 				try {
 					myFile.createNewFile();
-					byte[] mybytearray = new byte[BUFFER_SIZE];
 					fos = new FileOutputStream(myFile);
 					bis = new BufferedInputStream(sock.getInputStream());
+					byte[] mybytearray = new byte[BUFFER_SIZE];
 					int count = 0;
 					while ((count = bis.read(mybytearray)) >= 0) {
 						fos.write(mybytearray, 0, count);
@@ -53,16 +53,21 @@ public class ImageListener extends Thread {
 					Calendar cal = Calendar.getInstance();
 					String description = String.format("No description. Added: %s", dFormat.format(cal.getTime()));
 					String originalName = "[unknown].jpg";
-					
-					DBUtility.persistImage(IMAGE_FILE, description, originalName);
-					
-				} catch(IOException e) {
-					System.err.printf("Error: %s\n", e.getMessage());
-				} finally {
 					fos.close();
 					bis.close();
+					
+					DBUtility.persistImage(IMAGE_FILE, description, originalName);
+				} catch(IOException e) {
+					System.err.printf("Error: %s\n", e.getMessage());
+					e.printStackTrace();
+				} finally {
 					sock.close();
 				}
+				
+					
+					
+					
+				
 			}
 		}
 		catch (IOException e) {

@@ -29,6 +29,8 @@ public class BRIDServer extends javax.swing.JFrame {
 		System.out.printf("Entering FullScreen.\n");
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		this.setSize(gd.getDisplayMode().getWidth(), gd.getDisplayMode().getHeight());
+		
+		// change later according to user
 		jPanel1.setBackground(Color.BLACK);
 		
 		try {
@@ -39,6 +41,7 @@ public class BRIDServer extends javax.swing.JFrame {
 			System.err.printf("Error: ", e.getMessage());
 		}
 		
+		System.out.printf("WorkingDirectory: %s\n", System.getProperty("user.dir"));
 	}
 	
 	public void loadNewImage() {

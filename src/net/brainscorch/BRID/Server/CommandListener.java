@@ -1,6 +1,7 @@
 package net.brainscorch.BRID.Server;
 
-import java.io.InputStream;
+import java.awt.Dimension;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -14,7 +15,6 @@ public class CommandListener extends Thread {
 	
 	private Socket		dataSocket;
 	private ServerSocket	listenSocket;
-	private InputStream	inStream;
 	
 	private DisplayInformation dInfo;
 	
@@ -30,31 +30,38 @@ public class CommandListener extends Thread {
 			System.out.printf("CommandListener listening on port %s.\n", SERVER_PORT);
 			while (true) {
 				dataSocket = listenSocket.accept();
-				inStream = dataSocket.getInputStream();
+				System.out.printf("Accepted connection.\n");
+				ObjectInputStream ois = new ObjectInputStream(dataSocket.getInputStream());
+				ObjectOutputStream oos = new ObjectOutputStream(dataSocket.getOutputStream());
+				System.out.printf("Got I/O Streams.\n");
 				
-				int i = inStream.read();
-				String message = new String();
-				while (message.length() < MESSAGE_SIZE) {
-					message += (char)i;
-					i = inStream.read();
+				String message = (String)ois.readObject();
+			
+			
+				System.out.printf("Got a Message: %s\n", message);
+				switch (message) {
+					case STATUS_REQUEST:
+						String remoteAddr = stripAddress(dataSocket.getRemoteSocketAddress().toString());
+						System.out.printf("CommandListener received STATUS request from %s.\n", remoteAddr);
+						dInfo.refresh();
+						Dimension dimension = dInfo.getScreenDimension();
+						// add here more status information
+						String outMessage = String.format("SD%04d%04d", (int)dimension.getWidth(), (int)dimension.getHeight());
+						System.out.printf("StatusSender: Sending STATUS reply to %s: %s\n", remoteAddr, outMessage);
+						oos.writeObject(outMessage);
+						
+						break;
+					case DATABASE_DUMP:
+						System.out.println(DBUtility.getImageMapFromDB().toString());
+						oos.writeObject("Done.");
+						break;
+					default:
+						System.err.printf("CommandListener received malformed message from %s. IGNORED. Message: %s\n", dataSocket.getRemoteSocketAddress().toString(), message);
+						break;
 				}
 				
-				if (message.equals(STATUS_REQUEST)) {
-					String remoteAddr = stripAddress(dataSocket.getRemoteSocketAddress().toString());
-	
-					System.out.printf("CommandListener received STATUS request from %s.\n", remoteAddr);			
-					dInfo.refresh();
-					
-					StatusSender sSend = new StatusSender(remoteAddr, dInfo);
-					sSend.start();
-					
-				}
-				else if (message.equals(DATABASE_DUMP)) {
-					System.out.println(DBUtility.getImageMapFromDB().toString());
-				}
-				else {
-					System.err.printf("CommandListener received malformed message from %s. IGNORED. Message: %s\n", dataSocket.getRemoteSocketAddress().toString(), message);
-				}
+				oos.close();
+				ois.close();
 			}
 			
 		}

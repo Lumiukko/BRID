@@ -27,22 +27,29 @@ public class ImageSender {
 	
 	public void sendImageToServer(File f) {
 		try {
-			System.out.printf("Sending image to server...\n");
+			MessageLogger.log("Sending image to server...\n");
+			
 			Socket socket = new Socket(strServerAddress, intServerPort);
 			socket.setSoTimeout(TIMEOUT);
 			BufferedOutputStream outStream = new BufferedOutputStream(socket.getOutputStream());
 			BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(f));
 			byte[] buffer = new byte[BUFFER_SIZE];
+			int partsTenPercent = (int)(f.length() / BUFFER_SIZE / 10);
+			int partsFinished = 0;
+			MessageLogger.logSingle(" - Sent:  ");
 			for (int read = inStream.read(buffer); read >= 0; read = inStream.read(buffer)) {
 				outStream.write(buffer, 0, read);
+				partsFinished++;
+				if (partsFinished % partsTenPercent == 0)
+					MessageLogger.logSingle(String.format("%d", (int)(partsFinished / partsTenPercent * 10)) + "%  ");
 			}
-			System.out.printf("... finished.\n");
+			MessageLogger.log("");
+			MessageLogger.log("Image has been sent successfully.\n");
 			inStream.close();
 			outStream.close();
 		}
 		catch (Exception e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
+			MessageLogger.log(String.format("Error: %s\n", e.getMessage()));
 		}
 	}
 	

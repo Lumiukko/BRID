@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.Objects;
 
 public class ImageData {
-	private static final String	IMAGE_FOLDER = ("./img/");
+	private static final String	IMAGE_FOLDER = "./img/";
 	
 	private String		hashString;
 	private String		originalName;
