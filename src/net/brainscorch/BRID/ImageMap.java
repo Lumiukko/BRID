@@ -1,14 +1,15 @@
-package net.brainscorch.BRID.Server;
+package net.brainscorch.BRID;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
 
-public class ImageMap {
+public class ImageMap implements Serializable {
 	
 	Map<String, ImageData> imageMap;
 	
-	ImageMap() {
+	public ImageMap() {
 		this.imageMap = new HashMap<>();
 	}
 	
@@ -54,6 +55,16 @@ public class ImageMap {
 				iDataList.add(entry.getValue());
 			if (entry.getValue().getOriginalName().contains(keyword))
 				iDataList.add(entry.getValue());
+		}
+		return iDataList;
+	}
+	
+	public List<ImageData> getImageDataList() {
+		List<ImageData> iDataList = new ArrayList();
+		Iterator iter = imageMap.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<String, ImageData> entry = (Entry<String, ImageData>) iter.next();
+			iDataList.add(entry.getValue());
 		}
 		return iDataList;
 	}

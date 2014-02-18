@@ -1,11 +1,12 @@
-package net.brainscorch.BRID.Server;
+package net.brainscorch.BRID;
 
 import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ImageData {
+public class ImageData implements Serializable {
 	private static final String	IMAGE_FOLDER = "./img/";
 	
 	private String		hashString;
@@ -15,14 +16,14 @@ public class ImageData {
 	private String		description;
 	private File		imageFile;
 	
-	ImageData(String hashString) throws FileNotFoundException {
+	public ImageData(String hashString) throws FileNotFoundException {
 		this.hashString = hashString.toLowerCase();
 		imageFile = new File(IMAGE_FOLDER + this.getHashString() + ".jpg");
 		if (!imageFile.exists())
 			throw new FileNotFoundException(IMAGE_FOLDER + this.getHashString() + ".jpg");
 	}
 	
-	ImageData(String hashString, Integer imageID, String description, String originalName, Integer width, Integer height) throws FileNotFoundException {
+	public ImageData(String hashString, Integer imageID, String description, String originalName, Integer width, Integer height) throws FileNotFoundException {
 		this.hashString = hashString.toLowerCase();
 		this.databaseID = imageID;
 		this.description = description;

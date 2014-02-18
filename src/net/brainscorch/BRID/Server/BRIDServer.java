@@ -28,14 +28,14 @@ public class BRIDServer extends javax.swing.JFrame {
 		
 		System.out.printf("Entering FullScreen.\n");
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-		this.setSize(gd.getDisplayMode().getWidth(), gd.getDisplayMode().getHeight());
+		//this.setSize(gd.getDisplayMode().getWidth(), gd.getDisplayMode().getHeight());
 		
 		// change later according to user
 		jPanel1.setBackground(Color.BLACK);
 		
 		try {
 			Robot robot = new Robot();
-			robot.mouseMove((int)dInfo.getScreenDimension().getHeight(), (int)dInfo.getScreenDimension().getWidth());
+			//robot.mouseMove((int)dInfo.getScreenDimension().getHeight(), (int)dInfo.getScreenDimension().getWidth());
 		}
 		catch (AWTException e) {
 			System.err.printf("Error: ", e.getMessage());

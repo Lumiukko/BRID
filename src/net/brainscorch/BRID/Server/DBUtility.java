@@ -1,5 +1,6 @@
 package net.brainscorch.BRID.Server;
 
+import net.brainscorch.BRID.ImageData;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import javax.imageio.ImageIO;
+import net.brainscorch.BRID.ImageMap;
 
 public class DBUtility {
 	private final static String DATABASE_NAME = "images2.db";

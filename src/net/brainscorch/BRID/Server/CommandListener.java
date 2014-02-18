@@ -1,5 +1,6 @@
 package net.brainscorch.BRID.Server;
 
+import net.brainscorch.BRID.ImageMap;
 import java.awt.Dimension;
 import java.io.*;
 import java.net.ServerSocket;
@@ -10,6 +11,7 @@ public class CommandListener extends Thread {
 	
 	private final String	STATUS_REQUEST = "#STATUS#";
 	private final String	DATABASE_DUMP = "#DBDUMP#";
+	private final String	IMAGE_LIST_REQUEST = "#RILIST#";
 	
 	private final int	SERVER_PORT = 12021;
 	
@@ -54,6 +56,10 @@ public class CommandListener extends Thread {
 					case DATABASE_DUMP:
 						System.out.println(DBUtility.getImageMapFromDB().toString());
 						oos.writeObject("Done.");
+						break;
+					case IMAGE_LIST_REQUEST:
+						ImageMap iMap = DBUtility.getImageMapFromDB();
+						oos.writeObject(iMap);
 						break;
 					default:
 						System.err.printf("CommandListener received malformed message from %s. IGNORED. Message: %s\n", dataSocket.getRemoteSocketAddress().toString(), message);

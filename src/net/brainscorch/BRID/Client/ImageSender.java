@@ -1,10 +1,9 @@
 package net.brainscorch.BRID.Client;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.Socket;
+import javax.imageio.ImageIO;
 
 
 public class ImageSender {
